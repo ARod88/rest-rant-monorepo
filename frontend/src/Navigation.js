@@ -25,10 +25,26 @@ function Navigation() {
 
     if (currentUser) {
         loginActions = (
-            <li style={{ float: 'right' }}>
+            <>
+              <li style={{ float: "right" }}>
                 Logged in as {currentUser.firstName} {currentUser.lastName}
-            </li>
-        )
+              </li>
+              <li>
+                <button
+                  type="button"
+                  style={{ float: "right", marginRight: "20px" }}
+                  onClick={() => {
+                    localStorage.removeItem("token");
+                    window.location.reload();
+                  }}
+                >
+                  Log Out
+                </button>
+              </li>
+            </>
+          );
+       
+
     }
 
     return (
