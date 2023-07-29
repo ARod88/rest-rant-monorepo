@@ -14,29 +14,37 @@ router.post('/', async (req, res) => {
         }
     })
 
-    if (!user || !await bcrypt.compare(password, user.passwordDigest)){
+    if (!user || !await bcrypt.compare(req.body.password, user.passwordDigest)){
         res.status(404).json({
             message: 'Could not find user...'
         })
     } else {
         // pass back token stuff 
 
-        const { value } = await jwt.encode(process.env.JW_SECRET, { userId: user.userId })
-        
-        res.status(200).json({user, token: value })
+        // const { value } = await jwt.encode(process.env.JW_SECRET, { userId: user.userId })
+
+        req.session.userId= user.userId
+        req.status(200).json({user, token: value })
     }
 
     console.log(user)
 })
 
-router.get('/profule', async (req, res) => {
+router.get('/profile', async (req, res) => {
     try {
-        let userId = ''
+        console.log('The user session is', req.session.userId)
+    
         let user = await User.findOne({
             where: {
-                userId
-            }
-        })
+                userId: req.session.userId
+        }
+    })
+        res.json(user)
+    } catch {
+        res.json(null)
     }
+
 })
+                
+        
 module.exports = router
