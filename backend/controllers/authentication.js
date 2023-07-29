@@ -11,7 +11,8 @@ router.post('/', async (req, res) => {
     let user = await User.findOne({
         where: {
             email
-        }
+        },
+       
     })
   
 
