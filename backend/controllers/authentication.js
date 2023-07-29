@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const db = require("../models")
 const bcrypt = require('bcrypt')
-// const jwt = require('json-web-token')
+const jwt = require('json-web-token')
 
 const { User } = db
 
@@ -22,10 +22,9 @@ router.post('/', async (req, res) => {
         })
     } else {
         // pass back token stuff 
-
-        const { value } = await jwt.encode(process.env.JW_SECRET, { userId: user.userId })
-        
-        res.status(200).json({user, token: value })
+         const { value } = await jwt.encode(process.env.JWT_SECRET, { userId: user.userId })
+        console.log(result)
+        res.status(200).json({user, token: result.value })
     }
 
     console.log(user)
@@ -34,9 +33,10 @@ router.post('/', async (req, res) => {
 router.get('/profile', async (req, res) => {
     try {
         const [authMethod, token] = req.headers.authorization.split(' ');
-        
+        console.log('getting token info', result)
         if (authMethod === 'Bearer') {
-            const { value: { userId } } = await jwt.decode(process.env.JWT_SECRET, token);
+            const { value: {userId} } = await jwt.decode(process.env.JWT_SECRET, token);
+
             let user = await User.findOne({
                 where: {
                     userId
