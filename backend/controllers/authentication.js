@@ -22,7 +22,7 @@ router.post('/', async (req, res) => {
         })
     } else {
         // pass back token stuff 
-         const { value } = await jwt.encode(process.env.JWT_SECRET, { userId: user.userId })
+         const result = await jwt.encode(process.env.JWT_SECRET, { userId: user.userId })
         console.log(result)
         res.status(200).json({user, token: result.value })
     }
@@ -32,23 +32,8 @@ router.post('/', async (req, res) => {
 
 router.get('/profile', async (req, res) => {
     try {
-        const [authMethod, token] = req.headers.authorization.split(' ');
-        console.log('getting token info', result)
-        if (authMethod === 'Bearer') {
-            const { value: {userId} } = await jwt.decode(process.env.JWT_SECRET, token);
-
-            let user = await User.findOne({
-                where: {
-                    userId
-                }
-            })
-            if (user) {
-                res.status(200).json(user)
-            } else {
-                res.status(404).json({ message: 'user could not be found'})
-            }
-        }
-    } catch(e) {
+      res.status(200).json(req.currentUser)
+        } catch(e) {
         res.status(500).json({ message: 'Server did an oppsie'})
     }
 });
